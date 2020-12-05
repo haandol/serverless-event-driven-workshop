@@ -188,6 +188,8 @@ $ python -m http.server
 
 Open `http://localhost:8000` on web browser
 
+<img src="img/web.png"/>
+
 # Cleanup
 
 Destroy resources from your account
