@@ -4,15 +4,6 @@ This workshop shows you how to build serverless application based on event-drive
 You will learn how to communicate one Lambda to another in asynchronously using SQS,
 and how to push server response to client via Websocket API Gateway.
 
-# Prerequisites
-
-- awscli
-- Docker 19.x+
-- NodeJs 12.x+
-- AWS Account and locally configured AWS credential
-
-# Installation
-
 Deploying the CDK project provisions below infrastructure on your AWS account
 
 <img src="img/architecture.png"/>
@@ -25,6 +16,39 @@ Then, the server will count up to three numbers starting where the you left off.
 
 > BTW, you can not win against to server by design
 
+# Prerequisites
+
+- Docker 19.x+
+- NodeJs 12.x+
+- awscli
+- AWS Account and locally configured AWS credential
+
+If you run this workshop on **Cloud9 IDE**, skip Installation section
+
+# Installation
+
+Install Docker, [**official installation guide**](https://docs.docker.com/engine/install/)
+
+Install NodeJs, [**official installation guide**](https://nodejs.org/ko/download/)
+
+Install awcli
+
+```bash
+$ pip install awscli
+$ aws --version
+aws-cli/1.18.181 Python/3.7.4 Darwin/19.6.0 botocore/1.19.21
+```
+
+Configure awscli
+
+```bash
+$ aws configure
+AWS Access Key ID [****************MT6L]: 
+AWS Secret Access Key [****************yX2F]: 
+Default region name [ap-northeast-2]: 
+Default output format [json]:
+```
+
 ## Provision Infrastructure
 
 Install project dependencies
@@ -34,17 +58,17 @@ $ cd infra
 $ npm i
 ```
 
-Install cdk in global context,
-and run `cdk bootstrap` if this is first time to use CDK on your account.
+Install `cdk` on global context,
 
 ```bash
 $ npm i -g cdk@1.76.0
-$ cdk bootstrap
 ```
 
-Deploy infrastructure
+Run `cdk bootstrap` if this is first time to use CDK on your account.
+And deploy infrastructure
 
 ```bash
+$ cdk bootstrap
 $ cdk deploy "*" --require-approval never
 ```
 
@@ -57,12 +81,6 @@ $ cdk deploy "*" --require-approval never
 5. do 3~4 until **you** count 13.
 ## Websocket API Gateway
 
-Install `wscat` for test websocket
-
-```bash
-$ npm i -g wscat
-```
-
 Get endpoint url for Websocket API Gateway
 
 ```bash
@@ -71,7 +89,13 @@ $ echo $WS_ENDPOINT
 wss://xxx.execute-api.ap-northeast-2.amazonaws.com/dev
 ```
 
-connect to endpoint using wscat.
+Install `wscat` for connecting websocket endpoint
+
+```bash
+$ npm i -g wscat
+```
+
+Connect to endpoint using wscat.
 
 ```bash
 $ wscat -c $WS_ENDPOINT
@@ -80,9 +104,8 @@ Connected (press CTRL+C to quit)
 < {"message": "Forbidden", "connectionId":"XDmENcnwIE0CFEQ=", "requestId":"XDmGEE2RoE0FRdQ="}
 ```
 
-copy this `connectionId`, in this case it's *XDmENcnwIE0CFEQ=*, to your clipboard for next step.
-
-Keep open the terminal to get response from the server.
+Copy this `connectionId`, in this case it's *XDmENcnwIE0CFEQ=*, to your clipboard.
+And keep open the terminal to get response from the server on next step.
 
 ## Http API Gateway
 
