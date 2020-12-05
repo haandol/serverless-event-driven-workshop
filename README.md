@@ -118,10 +118,10 @@ Install [**httpie**](https://httpie.io/), it's human friendly versino of *curl*.
 $ brew install httpie
 
 # On Linux
-$ apt install httpie
+$ sudo apt install httpie
 
 # On Amazon Linux2
-$ yum install httpie
+$ sudo yum install httpie
 ```
 
 Get HTTP API Gateway url
