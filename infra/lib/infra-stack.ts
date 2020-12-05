@@ -26,6 +26,9 @@ export class InfraStack extends cdk.Stack {
         loggingLevel: 'INFO',
       }
     });
+    new cdk.CfnOutput(this, `WsApiUrl`, {
+      value: `${wsApi.attrApiEndpoint}/${wsApiDevStage.stageName}`,
+    });
 
     const credentialsRole = new iam.Role(this, `FunctionExecutionRole`, {
       assumedBy: new iam.ServicePrincipal('apigateway.amazonaws.com'),
@@ -83,9 +86,13 @@ export class InfraStack extends cdk.Stack {
         maxAge: cdk.Duration.days(10),
       },
     });
-    new apigwv2.HttpStage(this, 'HttpStage', {
+    const httpDevStage = new apigwv2.HttpStage(this, 'HttpStage', {
       httpApi,
       stageName: 'dev',
+      autoDeploy: true,
+    });
+    new cdk.CfnOutput(this, `HttpApiUrl`, {
+      value: `${httpApi.url}/${httpDevStage.stageName}` || 'undefined',
     });
 
     const sessionTable = new dynamodb.Table(this, `SessionTable`, {

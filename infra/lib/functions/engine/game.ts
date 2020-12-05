@@ -64,9 +64,11 @@ export const handler = async (event: awsLambda.SQSEvent, context: any): Promise<
 }
 
 function getNextMove(lastMove: number): string {
-  if (lastMove === END) return 'You lose';
+  if (lastMove === END) return 'You lose..';
 
   const currentMove = lastMove + 1;
+  if (currentMove === END) return 'You win!!';
+
   for (const losingNumber of CHEAT_SHEET) {
     if (currentMove > losingNumber) continue;
 
