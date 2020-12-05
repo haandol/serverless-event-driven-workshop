@@ -175,6 +175,19 @@ Continue game to the end, your websocket terminal would goes like this..
 < You lose..
 ```
 
+## Check out on webpage
+
+Open [**index.html**](public/index.html) and modify `wsUrl` and `httpUrl` variables.
+
+Run simple http server to serve *index.html*
+
+```bash
+$ cd ../public
+$ python -m http.server
+```
+
+Open `http://localhost:8000` on web browser
+
 # Cleanup
 
 Destroy resources from your account
