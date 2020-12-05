@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      form input { border: 0; padding: 10px; width: 90%; margin-right: 0.5%; }
+      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+    </style>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+    <script>
+      const wsUrl = 'wss://i44ursxt4f.execute-api.ap-northeast-2.amazonaws.com/dev';
+      const httpUrl = 'https://3vto9m3846.execute-api.ap-northeast-2.amazonaws.com/dev';
+
+      const socket = new WebSocket(wsUrl);
+      let connectionId = undefined;
+
+      socket.onopen = (event) => {
+        socket.send('connected');
+      }
+
+      socket.onmessage = (event) => {
+        console.log('event: ', event.data);
+        const data = JSON.parse(event.data.toString());
+        if (data.connectionId) {
+          connectionId = data.connectionId;
+          startGame();
+        } else {
+          console.log(data.data);
+          $('#messages').append(`<li>[SERVER] ${data.data}</li>`);
+        }
+      }
+
+      function startGame() {
+        $.ajax({
+          type: "POST",
+          url: `${httpUrl}/start`,
+          crossDomain: true,
+          contentType: "application/json",
+          timeout: 5000,
+          data: JSON.stringify({
+            accountId: "1",
+            sessionId: connectionId,
+          }),
+          success: (data) => {
+            console.log(data);
+          },
+          error: (jqXHR, status) => {
+            alert(jqXHR.responseText);
+          }
+        });
+      }
+
+      $(document).ready(() => {
+        $('#user-input').submit((event) => {
+          event.preventDefault();
+          const userMove = $('#m').val();
+          $('#messages').append(`<li>[YOU] ${userMove}</li>`);
+          $.ajax({
+            type: "POST",
+            url: `${httpUrl}/game`,
+            crossDomain: true,
+            contentType: "application/json",
+            timeout: 5000,
+            data: JSON.stringify({
+              accountId: "1",
+              sessionId: connectionId,
+              userMove,
+            }),
+            success: (data) => {
+              console.log(data);
+              $('#m').val('').focus();
+            },
+            error: (jqXHR, status) => {
+              alert(jqXHR.responseText);
+            }
+          });
+        });
+      });
+   </script>
+  </head>
+  <body>
+    <ul id="messages"></ul>
+    <form id="user-input" action="">
+      <input id="m" autocomplete="off" /><button>Send</button>
+    </form>
+  </body>
+</html>
