@@ -7,18 +7,22 @@ import * as lambda from '@aws-cdk/aws-lambda';
 import * as nodeLambda from '@aws-cdk/aws-lambda-nodejs';
 import * as sqs from '@aws-cdk/aws-sqs';
 import * as dynamodb from '@aws-cdk/aws-dynamodb';
+import { SessionProps, RuleProps, GameProps } from './interfaces/interface';
 
-export class InfraStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
-    super(scope, id, props);
+class WebsocketApi extends cdk.Construct {
+  public api: apigwv2.CfnApi;
+  public stage: apigwv2.CfnStage;
 
-    const wsApi = new apigwv2.CfnApi(this, `WebsocketApi`, {
-      name: 'WebsocketApi',
+  constructor(scope: cdk.Construct, id: string) {
+    super(scope, id);
+
+    this.api = new apigwv2.CfnApi(this, id, {
+      name: 'WsApi',
       protocolType: 'WEBSOCKET',
       routeSelectionExpression: '$request.body.action',
     });
-    const wsApiDevStage = new apigwv2.CfnStage(this, `WebsocketDevStage`, {
-      apiId: wsApi.ref,
+    this.stage = new apigwv2.CfnStage(this, `${id}Stage`, {
+      apiId: this.api.ref,
       stageName: 'dev',
       autoDeploy: true,
       defaultRouteSettings: {
@@ -26,8 +30,8 @@ export class InfraStack extends cdk.Stack {
         loggingLevel: 'INFO',
       }
     });
-    new cdk.CfnOutput(this, `WsApiUrl`, {
-      value: `${wsApi.attrApiEndpoint}/${wsApiDevStage.stageName}`,
+    new cdk.CfnOutput(this, `${id}Url`, {
+      value: `${this.api.attrApiEndpoint}/${this.stage.stageName}`,
     });
 
     const credentialsRole = new iam.Role(this, `FunctionExecutionRole`, {
@@ -45,13 +49,13 @@ export class InfraStack extends cdk.Stack {
       functionName: 'Connect',
     });
     const connectInteg = new apigwv2.CfnIntegration(this, `ConnectIntegration`, {
-      apiId: wsApi.ref,
+      apiId: this.api.ref,
       integrationType: 'AWS_PROXY',
       integrationUri: `arn:aws:apigateway:ap-northeast-2:lambda:path/2015-03-31/functions/${connectFunction.functionArn}/invocations`,
       credentialsArn: credentialsRole.roleArn,
     });
     new apigwv2.CfnRoute(this, `ConnectRoute`, {
-      apiId: wsApi.ref,
+      apiId: this.api.ref,
       routeKey: '$connect',
       operationName: 'ConnectRoute',
       target: `integrations/${connectInteg.ref}`,
@@ -65,19 +69,28 @@ export class InfraStack extends cdk.Stack {
       functionName: 'Disconnect',
     });
     const disconnectInteg = new apigwv2.CfnIntegration(this, `DisconnectIntegration`, {
-      apiId: wsApi.ref,
+      apiId: this.api.ref,
       integrationType: 'AWS_PROXY',
       integrationUri: `arn:aws:apigateway:ap-northeast-2:lambda:path/2015-03-31/functions/${disconnectFunction.functionArn}/invocations`,
       credentialsArn: credentialsRole.roleArn,
     });
     new apigwv2.CfnRoute(this, `DisconnectRoute`, {
-      apiId: wsApi.ref,
+      apiId: this.api.ref,
       routeKey: '$disconnect',
       operationName: 'DisconnectRoute',
       target: `integrations/${disconnectInteg.ref}`,
     });
+  }
+}
 
-    const httpApi = new apigwv2.HttpApi(this, `HttpApi`, {
+class HttpApi extends cdk.Construct {
+  public api: apigwv2.HttpApi;
+  public stage: apigwv2.IStage;
+
+  constructor(scope: cdk.Construct, id: string) {
+    super(scope, id);
+
+    this.api = new apigwv2.HttpApi(this, id, {
       apiName: `GameApi`,
       corsPreflight: {
         allowHeaders: ['Authorization'],
@@ -86,16 +99,26 @@ export class InfraStack extends cdk.Stack {
         maxAge: cdk.Duration.days(10),
       },
     });
-    const httpDevStage = new apigwv2.HttpStage(this, 'HttpStage', {
-      httpApi,
+
+    this.stage = new apigwv2.HttpStage(this, `${id}Stage`, {
+      httpApi: this.api,
       stageName: 'dev',
       autoDeploy: true,
     });
-    new cdk.CfnOutput(this, `HttpApiUrl`, {
-      value: `${httpApi.url}/${httpDevStage.stageName}` || 'undefined',
-    });
 
-    const sessionTable = new dynamodb.Table(this, `SessionTable`, {
+    new cdk.CfnOutput(this, `${id}Url`, {
+      value: `${this.api.url}/${this.stage.stageName}` || 'undefined',
+    });
+  }
+}
+
+class SessionEngine extends cdk.Construct {
+  public sessionTable: dynamodb.Table;
+
+  constructor(scope: cdk.Construct, id: string, props: SessionProps) {
+    super(scope, id);
+
+    this.sessionTable = new dynamodb.Table(this, `SessionTable`, {
       tableName: 'Session',
       partitionKey: {
         name: 'accountId',
@@ -107,85 +130,127 @@ export class InfraStack extends cdk.Stack {
       },
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
-    const sessionEngine = new nodeLambda.NodejsFunction(this, `SessionEngine`, {
+    const sessionFunction = new nodeLambda.NodejsFunction(this, `SessionFunction`, {
       entry: path.resolve(__dirname, 'functions', 'engine', 'session.ts'),
       handler: 'handler',
       runtime: lambda.Runtime.NODEJS_12_X,
       timeout: cdk.Duration.seconds(5),
-      functionName: 'SessionEngine',
+      functionName: 'SessionFunction',
       environment: {
-        TABLE_NAME: sessionTable.tableName,
+        TABLE_NAME: this.sessionTable.tableName,
       },
     });
-    sessionEngine.addToRolePolicy(new iam.PolicyStatement({
+    sessionFunction.addToRolePolicy(new iam.PolicyStatement({
       actions: ['dynamodb:*'],
       effect: iam.Effect.ALLOW,
       resources: ['*'],
     }));
-    sessionTable.grantReadWriteData(sessionEngine);
+    this.sessionTable.grantReadWriteData(sessionFunction);
     const sessionIntegration = new integrations.LambdaProxyIntegration({
-      handler: sessionEngine,
+      handler: sessionFunction,
     });
-    httpApi.addRoutes({
+    props.httpApi.addRoutes({
       path: '/start',
       methods: [apigwv2.HttpMethod.POST],
       integration: sessionIntegration,
     });
+  }
+}
 
-    const messageQueue = new sqs.Queue(this, `MessageQueue`, {
-      queueName: 'MessageQueue.fifo', 
-      retentionPeriod: cdk.Duration.days(1),
-      fifo: true,
-    });
-    const ruleEngine = new nodeLambda.NodejsFunction(this, `RuleEngine`, {
+class RuleEngine extends cdk.Construct {
+  public ruleFunction: lambda.IFunction;
+
+  constructor(scope: cdk.Construct, id: string, props: RuleProps) {
+    super(scope, id);
+    this.ruleFunction = new nodeLambda.NodejsFunction(this, `RuleFunction`, {
       entry: path.resolve(__dirname, 'functions', 'engine', 'rule.ts'),
       handler: 'handler',
       runtime: lambda.Runtime.NODEJS_12_X,
       timeout: cdk.Duration.seconds(5),
-      functionName: 'RuleEngine',
+      functionName: 'RuleFunction',
       environment: {
-        TABLE_NAME: sessionTable.tableName,
-        QUEUE_URL: messageQueue.queueUrl,
+        TABLE_NAME: props.sessionTable.tableName,
+        QUEUE_URL: props.messageQueue.queueUrl,
       },
     });
-    ruleEngine.addToRolePolicy(new iam.PolicyStatement({
+    this.ruleFunction.addToRolePolicy(new iam.PolicyStatement({
       actions: ['dynamodb:*'],
       effect: iam.Effect.ALLOW,
       resources: ['*'],
     }));
-    sessionTable.grantReadData(ruleEngine);
-    messageQueue.grantSendMessages(ruleEngine);
+    props.sessionTable.grantReadData(this.ruleFunction);
+    props.messageQueue.grantSendMessages(this.ruleFunction);
+
     const ruleIntegration = new integrations.LambdaProxyIntegration({
-      handler: ruleEngine,
+      handler: this.ruleFunction,
     });
-    httpApi.addRoutes({
+    props.httpApi.addRoutes({
       path: '/game',
       methods: [apigwv2.HttpMethod.POST],
       integration: ruleIntegration,
     });
+  }
+}
 
-    const gameEngine = new nodeLambda.NodejsFunction(this, `GameEngine`, {
+class GameEngine extends cdk.Construct {
+  public gameFunction: lambda.IFunction;
+
+  constructor(scope: cdk.Construct, id: string, props: GameProps) {
+    super(scope, id);
+
+    this.gameFunction = new nodeLambda.NodejsFunction(this, `GameFunction`, {
       entry: path.resolve(__dirname, 'functions', 'engine', 'game.ts'),
       handler: 'handler',
       runtime: lambda.Runtime.NODEJS_12_X,
       timeout: cdk.Duration.seconds(5),
-      functionName: 'GameEngine',
+      functionName: 'GameFunction',
       environment: {
-        WS_ENDPOINT: wsApi.attrApiEndpoint,
-        WS_STAGE: wsApiDevStage.stageName,
-        QUEUE_URL: messageQueue.queueUrl,
+        WS_ENDPOINT: props.wsApi.attrApiEndpoint,
+        WS_STAGE: props.wsApiStage.stageName,
+        QUEUE_URL: props.messageQueue.queueUrl,
       },
     });
-    gameEngine.addToRolePolicy(new iam.PolicyStatement({
+    this.gameFunction.addToRolePolicy(new iam.PolicyStatement({
       actions: ['execute-api:ManageConnections'],
       effect: iam.Effect.ALLOW,
       resources: ['*'],
     }));
-    gameEngine.grantInvoke(new iam.ServicePrincipal('sqs.amazonaws.com'));
-    messageQueue.grantConsumeMessages(gameEngine);
-    gameEngine.addEventSourceMapping('GameEngineEventMapping', {
-      eventSourceArn: messageQueue.queueArn, 
+    this.gameFunction.grantInvoke(new iam.ServicePrincipal('sqs.amazonaws.com'));
+    this.gameFunction.addEventSourceMapping('GameFunctionEventMapping', {
+      eventSourceArn: props.messageQueue.queueArn,
       batchSize: 10,
+    });
+    props.messageQueue.grantConsumeMessages(this.gameFunction);
+  }
+}
+
+export class InfraStack extends cdk.Stack {
+  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+    super(scope, id, props);
+
+    const wsApi = new WebsocketApi(this, `WebsocketApi`);
+    const httpApi = new HttpApi(this, 'HttpApi');
+
+    const sessionEngine = new SessionEngine(this, `SessionEngine`, {
+      httpApi: httpApi.api,
+    });
+
+    const messageQueue = new sqs.Queue(this, `MessageQueue`, {
+      queueName: 'MessageQueue.fifo',
+      fifo: true,
+      retentionPeriod: cdk.Duration.days(1),
+    });
+
+    const ruleEngine = new RuleEngine(this, `RuleEngine`, {
+      httpApi: httpApi.api,
+      sessionTable: sessionEngine.sessionTable,
+      messageQueue,
+    });
+
+    const gameEngine = new GameEngine(this, `GameEngine`, {
+      wsApi: wsApi.api,
+      wsApiStage: wsApi.stage,
+      messageQueue,
     });
   }
 
