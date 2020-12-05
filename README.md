@@ -84,7 +84,7 @@ $ cdk deploy "*" --require-approval never
 Get endpoint url for Websocket API Gateway
 
 ```bash
-$ export WS_ENDPOINT=$(aws cloudformation describe-stacks --stack-name InfraStack --query "Stacks[0].Outputs[?OutputKey=='WsApiUrl'].OutputValue" --output text)
+$ export WS_ENDPOINT=$(aws cloudformation describe-stacks --stack-name InfraStack --query "Stacks[0].Outputs[?ExportName=='WsApiUrl'].OutputValue" --output text)
 $ echo $WS_ENDPOINT
 wss://xxx.execute-api.ap-northeast-2.amazonaws.com/dev
 ```
@@ -127,7 +127,7 @@ $ sudo yum install httpie
 Get HTTP API Gateway url
 
 ```bash
-$ export HTTP_ENDPOINT=$(aws cloudformation describe-stacks --stack-name InfraStack --query "Stacks[0].Outputs[?OutputKey=='HttpApiUrl'].OutputValue" --output text)
+$ export HTTP_ENDPOINT=$(aws cloudformation describe-stacks --stack-name InfraStack --query "Stacks[0].Outputs[?ExportName=='HttpApiUrl'].OutputValue" --output text)
 $ echo $HTTP_ENDPOINT
 https://xxxx.execute-api.ap-northeast-2.amazonaws.com/dev
 ```
