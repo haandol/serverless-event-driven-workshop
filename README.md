@@ -135,13 +135,14 @@ https://xxxx.execute-api.ap-northeast-2.amazonaws.com/dev
 Start game session using connectionId and arbitrary accountId.
 
 ```bash
-$ http post $HTTP_ENDPOINT/start sessionId=CONNECTION_ID accountId=1
+$ export CONN_ID=CONNECTION_ID_YOU_COPIED   # e.g. XDqRFclbIE0CJPw=
+$ http post $HTTP_ENDPOINT/start sessionId=$CONN_ID accountId=1
 ```
 
 Count your numbers via `POST /game`
 
 ```bash
-$ http post $HTTP_ENDPOINT/game sessionId=CONNECTION_ID accountId=1 userMove=1,2
+$ http post $HTTP_ENDPOINT/game sessionId=$CONN_ID accountId=1 userMove=1,2
 
 HTTP/1.1 200 OK
 Apigw-Requestid: XDqYKi2WoE0EPdg=
