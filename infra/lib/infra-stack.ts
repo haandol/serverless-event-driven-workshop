@@ -30,7 +30,7 @@ class WebsocketApi extends cdk.Construct {
         loggingLevel: 'INFO',
       }
     });
-    new cdk.CfnOutput(this, `${id}Url`, {
+    new cdk.CfnOutput(this, `WsApiUrl`, {
       value: `${this.api.attrApiEndpoint}/${this.stage.stageName}`,
     });
 
@@ -106,7 +106,7 @@ class HttpApi extends cdk.Construct {
       autoDeploy: true,
     });
 
-    new cdk.CfnOutput(this, `${id}Url`, {
+    new cdk.CfnOutput(this, `HttpApiUrl`, {
       value: `${this.api.url}/${this.stage.stageName}` || 'undefined',
     });
   }
