@@ -44,7 +44,7 @@ export const handler = async (event: awsLambda.SQSEvent, context: any): Promise<
     const nextMove = getNextMove(lastMove);
     try {
       await client.postToConnection({
-        Data: Buffer.from(JSON.stringify({ data: nextMove}), 'utf8'),
+        Data: Buffer.from(JSON.stringify({ data: nextMove }), 'utf8'),
         ConnectionId: sessionId,
       }).promise();
       console.log('sent to socket');
