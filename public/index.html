@@ -17,24 +17,8 @@
       const wsUrl = 'wss://i44ursxt4f.execute-api.ap-northeast-2.amazonaws.com/dev';
       const httpUrl = 'https://3vto9m3846.execute-api.ap-northeast-2.amazonaws.com/dev';
 
-      const socket = new WebSocket(wsUrl);
       let connectionId = undefined;
-
-      socket.onopen = (event) => {
-        socket.send('connected');
-      }
-
-      socket.onmessage = (event) => {
-        console.log('event: ', event.data);
-        const data = JSON.parse(event.data.toString());
-        if (data.connectionId) {
-          connectionId = data.connectionId;
-          startGame();
-        } else {
-          console.log(data.data);
-          $('#messages').append(`<li>[SERVER] ${data.data}</li>`);
-        }
-      }
+      let lastMove = 0;
 
       function startGame() {
         $.ajax({
@@ -56,11 +40,51 @@
         });
       }
 
+      function getLastMove(move) {
+        const moves = move.split(',');
+        return parseInt(moves[moves.length - 1]);
+      }
+
+      function getFirstMove(move) {
+        const moves = move.split(',');
+        return parseInt(moves[0]);
+      }
+
+      function appendMessage(msg) {
+        $('#messages').append(`<li>${msg}</li>`);
+      }
+
       $(document).ready(() => {
+        const socket = new WebSocket(wsUrl);
+
+        socket.onopen = (event) => {
+          socket.send('connected');
+          $('#m').removeAttr('disabled').focus();
+        }
+
+        socket.onmessage = (event) => {
+          console.log('event: ', event.data);
+          const data = JSON.parse(event.data.toString());
+          if (data.connectionId) {
+            connectionId = data.connectionId;
+            startGame();
+          } else {
+            appendMessage(`[SERVER] ${data.data}`);
+            lastMove = getLastMove(data.data) || 0;
+          }
+        }
+
         $('#user-input').submit((event) => {
           event.preventDefault();
           const userMove = $('#m').val();
-          $('#messages').append(`<li>[YOU] ${userMove}</li>`);
+          console.log(lastMove);
+          if (getFirstMove(userMove) <= lastMove || lastMove+3 < getLastMove(userMove)) {
+            appendMessage(`your input should between ${lastMove+1} and ${Math.min(lastMove+3, 13)}`);
+            $('#m').val('');
+            return;
+          }
+          appendMessage(`[YOU] ${userMove}`);
+
           $.ajax({
             type: "POST",
             url: `${httpUrl}/game`,
@@ -87,7 +111,7 @@
   <body>
     <ul id="messages"></ul>
     <form id="user-input" action="">
-      <input id="m" autocomplete="off" /><button>Send</button>
+      <input id="m" autocomplete="off" disabled/><button>Send</button>
     </form>
   </body>
 </html>
