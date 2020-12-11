@@ -183,10 +183,10 @@ Run simple http server to serve *index.html*
 
 ```bash
 $ cd ../public
-$ python -m http.server
+$ python -m http.server 8080
 ```
 
-Open `http://localhost:8000` on web browser
+Open `http://localhost:8080` on web browser
 
 <img src="img/web.png"/>
 
