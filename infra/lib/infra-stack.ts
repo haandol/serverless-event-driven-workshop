@@ -89,7 +89,7 @@ class HttpApi extends cdk.Construct {
     this.api = new apigwv2.HttpApi(this, id, {
       apiName: `GameApi`,
       corsPreflight: {
-        allowHeaders: ['Authorization'],
+        allowHeaders: ['*'],
         allowMethods: [apigwv2.HttpMethod.GET, apigwv2.HttpMethod.POST, apigwv2.HttpMethod.OPTIONS],
         allowOrigins: ['*'],
         maxAge: cdk.Duration.days(10),

@@ -30,6 +30,9 @@ export const handler = async (event: awsLambda.APIGatewayProxyEventV2, context: 
 
   return {
     statusCode: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*'
+    },
     body: `Session created: ${sessionId}`,
   };
 }
