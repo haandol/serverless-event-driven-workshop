@@ -11,28 +11,27 @@ import { SessionProps, RuleProps, GameProps } from './interfaces/interface';
 
 class WebsocketApi extends cdk.Construct {
   public api: apigwv2.CfnApi;
-  public stage: apigwv2.CfnStage;
 
   constructor(scope: cdk.Construct, id: string) {
     super(scope, id);
+    
+    /*
+    new iam.Role(this, 'ApiGatewayLoggingRole', {
+      assumedBy: new iam.ServicePrincipal("apigateway.amazonaws.com"),
+      managedPolicies: [
+        { managedPolicyArn: "arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs" },
+      ]
+    });
+    */
 
     this.api = new apigwv2.CfnApi(this, id, {
       name: 'WsApi',
       protocolType: 'WEBSOCKET',
       routeSelectionExpression: '$request.body.action',
     });
-    this.stage = new apigwv2.CfnStage(this, `${id}Stage`, {
-      apiId: this.api.ref,
-      stageName: 'dev',
-      autoDeploy: true,
-      defaultRouteSettings: {
-        dataTraceEnabled: true,
-        loggingLevel: 'INFO',
-      }
-    });
     new cdk.CfnOutput(this, `${id}Url`, {
       exportName: 'WsApiUrl',
-      value: `${this.api.attrApiEndpoint}/${this.stage.stageName}`,
+      value: `${this.api.attrApiEndpoint}`,
     });
 
     const credentialsRole = new iam.Role(this, `FunctionExecutionRole`, {
@@ -86,7 +85,6 @@ class WebsocketApi extends cdk.Construct {
 
 class HttpApi extends cdk.Construct {
   public api: apigwv2.HttpApi;
-  public stage: apigwv2.IStage;
 
   constructor(scope: cdk.Construct, id: string) {
     super(scope, id);
@@ -101,15 +99,9 @@ class HttpApi extends cdk.Construct {
       },
     });
 
-    this.stage = new apigwv2.HttpStage(this, `${id}Stage`, {
-      httpApi: this.api,
-      stageName: 'dev',
-      autoDeploy: true,
-    });
-
     new cdk.CfnOutput(this, `${id}Url`, {
       exportName: 'HttpApiUrl',
-      value: `${this.api.url}/${this.stage.stageName}` || 'undefined',
+      value: `${this.api.url}` || 'undefined',
     });
   }
 }
@@ -208,7 +200,6 @@ class GameEngine extends cdk.Construct {
       functionName: 'GameFunction',
       environment: {
         WS_ENDPOINT: props.wsApi.attrApiEndpoint,
-        WS_STAGE: props.wsApiStage.stageName,
         QUEUE_URL: props.messageQueue.queueUrl,
       },
     });
@@ -251,7 +242,6 @@ export class InfraStack extends cdk.Stack {
 
     const gameEngine = new GameEngine(this, `GameEngine`, {
       wsApi: wsApi.api,
-      wsApiStage: wsApi.stage,
       messageQueue,
     });
   }

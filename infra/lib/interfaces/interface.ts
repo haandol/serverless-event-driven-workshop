@@ -14,7 +14,6 @@ export interface RuleProps {
 
 export interface GameProps {
   wsApi: apigwv2.CfnApi;
-  wsApiStage: apigwv2.CfnStage;
   messageQueue: sqs.IQueue;
 }
 
