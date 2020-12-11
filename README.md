@@ -161,7 +161,7 @@ Check out websocket
 ```bash
 > hi
 < {"message": "Forbidden", "connectionId":"XDqRFclbIE0CJPw=", "requestId":"XDqROEJuoE0FpCQ="}
-< 3,4
+< {"data":"3,4"}
 ```
 
 Continue game to the end, your websocket terminal would goes like this..
@@ -169,10 +169,10 @@ Continue game to the end, your websocket terminal would goes like this..
 ```bash
 > hi
 < {"message": "Forbidden", "connectionId":"XEEuXcgPoE0Acmw=", "requestId":"XEFD0E2foE0Fpgg="}
-< 3,4
-< 7,8
-< 10,11,12
-< You lose..
+< {"data":"3,4"}
+< {"data":"7,8"}
+< {"data":"10,11,12"}
+< {"data":"You lose.."}
 ```
 
 ## Check out on webpage
