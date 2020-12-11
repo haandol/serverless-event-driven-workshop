@@ -3,6 +3,7 @@ import * as AWS from 'aws-sdk';
 import * as awsLambda from 'aws-lambda';
 
 const WsEndpoint = process.env['WS_ENDPOINT']!;
+const WsStage = process.env['WS_STAGE']!;
 const QueueUrl: string = process.env['QUEUE_URL']!;
 
 let client: AWS.ApiGatewayManagementApi | undefined = undefined;
@@ -31,7 +32,7 @@ export const handler = async (event: awsLambda.SQSEvent, context: any): Promise<
 
   if (!client) {
     const endpoint = WsEndpoint.replace('wss://', 'https://');
-    client = new AWS.ApiGatewayManagementApi({ endpoint: `${endpoint}` });
+    client = new AWS.ApiGatewayManagementApi({ endpoint: `${endpoint}/${WsStage}` });
   }
   if (!sqs) sqs = new AWS.SQS();
 
