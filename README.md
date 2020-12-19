@@ -18,7 +18,6 @@ Then, the server will count up to three numbers starting where the you left off.
 
 # Prerequisites
 
-- Docker 19.x+
 - NodeJs 12.x+
 - awscli
 - AWS Account and locally configured AWS credential
@@ -26,8 +25,6 @@ Then, the server will count up to three numbers starting where the you left off.
 If you run this workshop on **Cloud9 IDE**, skip Installation section
 
 # Installation
-
-Install Docker, [**official installation guide**](https://docs.docker.com/engine/install/)
 
 Install NodeJs, [**official installation guide**](https://nodejs.org/ko/download/)
 
@@ -58,10 +55,10 @@ $ cd infra
 $ npm i
 ```
 
-Install `cdk` on global context,
+Install `cdk` and `esbuild` on global context,
 
 ```bash
-$ npm i -g cdk@1.76.0
+$ npm i -g cdk@1.76.0 esbuild
 ```
 
 Run `cdk bootstrap` if this is first time to use CDK on your account.
