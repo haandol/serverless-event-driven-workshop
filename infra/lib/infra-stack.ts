@@ -10,8 +10,8 @@ import * as dynamodb from '@aws-cdk/aws-dynamodb';
 import { SessionProps, RuleProps, GameProps } from './interfaces/interface';
 
 class WebsocketApi extends cdk.Construct {
-  public api: apigwv2.CfnApi;
-  public stage: apigwv2.CfnStage;
+  public readonly api: apigwv2.CfnApi;
+  public readonly stage: apigwv2.CfnStage;
 
   constructor(scope: cdk.Construct, id: string) {
     super(scope, id);
@@ -81,7 +81,7 @@ class WebsocketApi extends cdk.Construct {
 }
 
 class HttpApi extends cdk.Construct {
-  public api: apigwv2.HttpApi;
+  public readonly api: apigwv2.HttpApi;
 
   constructor(scope: cdk.Construct, id: string) {
     super(scope, id);
@@ -104,7 +104,7 @@ class HttpApi extends cdk.Construct {
 }
 
 class SessionEngine extends cdk.Construct {
-  public sessionTable: dynamodb.Table;
+  public readonly sessionTable: dynamodb.Table;
 
   constructor(scope: cdk.Construct, id: string, props: SessionProps) {
     super(scope, id);
@@ -149,7 +149,7 @@ class SessionEngine extends cdk.Construct {
 }
 
 class RuleEngine extends cdk.Construct {
-  public ruleFunction: lambda.IFunction;
+  public readonly ruleFunction: lambda.IFunction;
 
   constructor(scope: cdk.Construct, id: string, props: RuleProps) {
     super(scope, id);
@@ -184,7 +184,7 @@ class RuleEngine extends cdk.Construct {
 }
 
 class GameEngine extends cdk.Construct {
-  public gameFunction: lambda.IFunction;
+  public readonly gameFunction: lambda.IFunction;
 
   constructor(scope: cdk.Construct, id: string, props: GameProps) {
     super(scope, id);
