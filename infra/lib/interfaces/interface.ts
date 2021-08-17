@@ -13,8 +13,8 @@ export interface RuleProps {
 }
 
 export interface GameProps {
-  wsApi: apigwv2.CfnApi;
-  wsApiStage: apigwv2.CfnStage;
+  wsApi: apigwv2.IWebSocketApi;
+  wsApiStage: apigwv2.IWebSocketStage;
   messageQueue: sqs.IQueue;
 }
 

@@ -58,7 +58,7 @@ $ npm i
 Install `cdk` and `esbuild` on global context,
 
 ```bash
-$ npm i -g cdk@1.76.0 esbuild
+$ npm i -g cdk@1.117.0 esbuild
 ```
 
 Run `cdk bootstrap` if this is first time to use CDK on your account.
@@ -132,7 +132,7 @@ https://xxxx.execute-api.ap-northeast-2.amazonaws.com/dev
 Start game session using connectionId and arbitrary accountId.
 
 ```bash
-$ export CONN_ID=CONNECTION_ID_YOU_COPIED   # e.g. XDqRFclbIE0CJPw=
+$ export CONN_ID="CONNECTION_ID_YOU_COPIED"   # e.g. XDqRFclbIE0CJPw=
 $ http post $HTTP_ENDPOINT/start sessionId=$CONN_ID accountId=1
 ```
 
