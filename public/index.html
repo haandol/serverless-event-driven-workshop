@@ -14,8 +14,8 @@
     </style>
     <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
     <script>
-      const wsUrl = 'wss://5v5vuxaaol.execute-api.ap-northeast-2.amazonaws.com/dev';
-      const httpUrl = 'https://6l3fwn258b.execute-api.ap-northeast-2.amazonaws.com';
+      const wsUrl = 'wss://toy3jhdwv9.execute-api.ap-northeast-2.amazonaws.com/dev';
+      const httpUrl = 'https://u98051f0ug.execute-api.ap-northeast-2.amazonaws.com';
 
       let connectionId = undefined;
       let lastMove = 0;
@@ -84,7 +84,7 @@
           event.preventDefault();
           const userMove = $('#m').val();
           console.log(lastMove);
-          if (getFirstMove(userMove) <= lastMove || lastMove+3 < getLastMove(userMove)) {
+          if (!userMove || getFirstMove(userMove) <= lastMove || lastMove+3 < getLastMove(userMove)) {
             appendMessage(`your input should between ${lastMove+1} and ${Math.min(lastMove+3, 13)}`);
             $('#m').val('');
             return;

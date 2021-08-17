@@ -191,7 +191,10 @@ class GameEngine extends cdk.Construct {
       },
     });
     this.gameFunction.addToRolePolicy(new iam.PolicyStatement({
-      actions: ['execute-api:ManageConnections'],
+      actions: [
+        'execute-api:Invoke',
+        'execute-api:ManageConnections',
+      ],
       effect: iam.Effect.ALLOW,
       resources: ['*'],
     }));

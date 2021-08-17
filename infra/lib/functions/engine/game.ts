@@ -4,7 +4,7 @@ import * as awsLambda from 'aws-lambda';
 
 const WsEndpoint = process.env['WS_ENDPOINT']!;
 const WsStage = process.env['WS_STAGE']!;
-const QueueUrl: string = process.env['QUEUE_URL']!;
+const QueueUrl = process.env['QUEUE_URL']!;
 
 let client: AWS.ApiGatewayManagementApi | undefined = undefined;
 let sqs: AWS.SQS | undefined = undefined;
