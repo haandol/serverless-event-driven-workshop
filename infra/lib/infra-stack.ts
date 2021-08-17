@@ -34,7 +34,7 @@ class WebsocketApi extends cdk.Construct {
     const connectFunction = new nodeLambda.NodejsFunction(this, `ConnectFunction`, {
       entry: path.resolve(__dirname, 'functions', 'websocket', 'connect.ts'),
       handler: 'handler',
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_14_X,
       timeout: cdk.Duration.seconds(5),
       functionName: `${ns}Connect`,
     });
@@ -50,7 +50,7 @@ class WebsocketApi extends cdk.Construct {
     const disconnectFunction = new nodeLambda.NodejsFunction(this, `DisconnectFunction`, {
       entry: path.resolve(__dirname, 'functions', 'websocket', 'disconnect.ts'),
       handler: 'handler',
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_14_X,
       timeout: cdk.Duration.seconds(5),
       functionName: `${ns}Disconnect`,
     });
@@ -145,7 +145,7 @@ class RuleEngine extends cdk.Construct {
     this.ruleFunction = new nodeLambda.NodejsFunction(this, `RuleFunction`, {
       entry: path.resolve(__dirname, 'functions', 'engine', 'rule.ts'),
       handler: 'handler',
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_14_X,
       timeout: cdk.Duration.seconds(5),
       functionName: `${ns}RuleFunction`,
       environment: {
@@ -181,7 +181,7 @@ class GameEngine extends cdk.Construct {
     this.gameFunction = new nodeLambda.NodejsFunction(this, `GameFunction`, {
       entry: path.resolve(__dirname, 'functions', 'engine', 'game.ts'),
       handler: 'handler',
-      runtime: lambda.Runtime.NODEJS_12_X,
+      runtime: lambda.Runtime.NODEJS_14_X,
       timeout: cdk.Duration.seconds(5),
       functionName: `${ns}GameFunction`,
       environment: {
