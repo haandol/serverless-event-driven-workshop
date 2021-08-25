@@ -1,0 +1,618 @@
+<!doctype html>
+<html><head><title>Serverless ImmersionDay</title><meta charset="UTF-8"><link href="http://fonts.googleapis.com/css?family=Crimson+Text:400,400italic,700,700italic|Roboto:400,700,700italic,400italic" rel="stylesheet" type="text/css"><style>/*
+ * Copyright 2014 Quip
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain
+ * a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ */
+
+body {
+    font-size: 15px;
+    color: #333;
+    background: white;
+    padding: 60px 95px;
+    max-width: 900px;
+    margin: 0 auto;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "kern";
+    font-kerning: normal;
+    -moz-font-feature-settings: "kern";
+    -webkit-font-feature-settings: "kern";
+}
+
+/* Headings */
+h1,
+h2,
+h3,
+th {
+    font-family: Roboto, sans-serif;
+    font-weight: 700;
+    margin: 0;
+    margin-top: 1.25em;
+    margin-bottom: 0.75em;
+}
+
+h1 {
+    font-size: 35px;
+    line-height: 42px;
+}
+
+h1:first-child {
+    margin-top: 0;
+}
+
+h2 {
+    font-size: 18px;
+    line-height: 22px;
+}
+
+h3 {
+    font-size: 13px;
+    line-height: 16px;
+}
+
+.capitalize-h3 h3 {
+    text-transform: uppercase;
+}
+
+/* Body text */
+body,
+p,
+ul,
+ol,
+td {
+    font-family: "Crimson Text", serif;
+    font-size: 16px;
+    line-height: 20px;
+}
+
+blockquote,
+q {
+    display: block;
+    margin: 1em 0;
+    font-style: italic;
+}
+
+blockquote a,
+q a {
+    text-decoration: underline;
+}
+
+blockquote {
+    padding-left: 10px;
+    border-left: 4px solid #a6a6a6;
+}
+
+q {
+    color: #a6a6a6;
+    line-height: 40px;
+    font-size: 24px;
+    text-align: center;
+    quotes: none;
+}
+
+q a {
+    color: #a6a6a6;
+}
+
+code,
+pre {
+    font-family: Consolas, "Liberation Mono", Menlo, "Courier Prime Web",
+        Courier, monospace;
+    background: #f2f2f2;
+}
+
+code {
+    padding: 1px;
+    margin: 0 -1px;
+    border-radius: 3px;
+}
+
+pre {
+    display: block;
+    line-height: 20px;
+    text-shadow: 0 1px white;
+    padding: 5px 5px 5px 30px;
+    white-space: nowrap;
+    position: relative;
+    margin: 1em 0;
+}
+
+pre:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 15px;
+    border-left: solid 1px #dadada;
+}
+
+/* Text Alignment */
+.line {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.align-center {
+    text-align: center;
+}
+
+.align-right {
+    text-align: end;
+}
+
+/* Lists */
+div[data-section-style="5"],
+div[data-section-style="6"],
+div[data-section-style="7"] {
+    margin: 12px 0;
+}
+
+ul {
+    padding: 0 0 0 40px;
+}
+
+ul li {
+    margin-bottom: 0.4em;
+}
+
+/* Bulleted list */
+div[data-section-style="5"] ul {
+    list-style-type: disc;
+}
+div[data-section-style="5"] ul ul {
+    list-style-type: circle;
+}
+div[data-section-style="5"] ul ul ul {
+    list-style-type: square;
+}
+div[data-section-style="5"] ul ul ul ul {
+    list-style-type: disc;
+}
+div[data-section-style="5"] ul ul ul ul ul {
+    list-style-type: circle;
+}
+div[data-section-style="5"] ul ul ul ul ul ul {
+    list-style-type: square;
+}
+
+/* Numbered list */
+div[data-section-style="6"] ul {
+    list-style-type: decimal;
+}
+div[data-section-style="6"] ul ul {
+    list-style-type: lower-alpha;
+}
+div[data-section-style="6"] ul ul ul {
+    list-style-type: lower-roman;
+}
+div[data-section-style="6"] ul ul ul ul {
+    list-style-type: decimal;
+}
+div[data-section-style="6"] ul ul ul ul ul {
+    list-style-type: lower-alpha;
+}
+div[data-section-style="6"] ul ul ul ul ul ul {
+    list-style-type: lower-roman;
+}
+
+/* Checklist */
+div[data-section-style="7"] ul {
+    list-style-type: none;
+}
+
+div[data-section-style="7"] ul li:before {
+    content: "\2610";
+    position: absolute;
+    display: inline;
+    margin-right: 1.2em;
+    margin-left: -1.2em;
+}
+
+div[data-section-style="7"] ul li.parent:before {
+    content: "";
+}
+
+div[data-section-style="7"] ul li.checked {
+    text-decoration: line-through;
+}
+
+div[data-section-style="7"] ul li.checked:before {
+    content: "\2611";
+    text-decoration: none;
+}
+
+/* Tables */
+div[data-section-style="8"] {
+    margin: 12px 0;
+}
+
+table {
+    border-spacing: 0;
+    border-collapse: separate;
+    border: solid 1px #bbb;
+    table-layout: fixed;
+    position: relative;
+}
+
+table th,
+table td {
+    padding: 2px 2px 0;
+    min-width: 1.5em;
+    word-wrap: break-word;
+}
+
+table th {
+    border-bottom: 1px solid #c7cbd1;
+    background: #f2f2f2;
+    font-weight: bold;
+    vertical-align: bottom;
+    color: #3a4449;
+    text-align: center;
+}
+
+table td {
+    padding-top: 0;
+    border-left: 1px solid #c7cbd1;
+    border-top: 1px solid #c7cbd1;
+    vertical-align: top;
+}
+
+table td.bold {
+    font-weight: bold;
+}
+
+table td.italic {
+    font-style: italic;
+}
+
+table td.underline {
+    text-decoration: underline;
+}
+
+table td.strikethrough {
+    text-decoration: line-through;
+}
+
+table td.underline.strikethrough {
+    text-decoration: underline line-through;
+}
+
+table td:first-child {
+    border-left: hidden;
+}
+
+table tr:first-child td {
+    border-top: hidden;
+}
+
+/* Images */
+div[data-section-style="11"] {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+div[data-section-style="11"][data-section-float="0"] {
+    clear: both;
+    text-align: center;
+}
+
+div[data-section-style="11"][data-section-float="1"] {
+    float: left;
+    clear: left;
+    margin-right: 20px;
+}
+
+div[data-section-style="11"][data-section-float="2"] {
+    float: right;
+    clear: right;
+    margin-left: 20px;
+}
+
+div[data-section-style="11"] img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: auto;
+}
+
+div[data-section-style="11"].show-border {
+    outline: 1px solid rgba(0, 0, 0, 0.12);
+    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.05);
+}
+
+hr {
+    width: 70px;
+    margin: 20px auto;
+}
+
+/* Apps */
+div[data-section-style="19"].placeholder {
+    margin: 0.8em auto;
+    padding: 4px 0;
+    display: block;
+    color: #3d87f5;
+    text-align: center;
+    border: 1px solid rgba(41, 182, 242, 0.2);
+    border-radius: 3px;
+    background: #e9f8fe;
+    font-family: Roboto, sans-serif;
+}
+
+div[data-section-style="19"].first-party-element {
+    margin-bottom: 10px;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+div[data-section-style="19"].first-party-element.kanban {
+    background-image: url("https://quip-cdn.com/nK0hSyhsb4jrLIL2s5Ma-g");
+    height: 166px;
+}
+
+div[data-section-style="19"].first-party-element.calendar {
+    background-image: url("https://quip-cdn.com/OYujqLny03RILxcLIiyERg");
+    height: 244px;
+}
+
+div[data-section-style="19"].first-party-element.poll {
+    background-image: url("https://quip-cdn.com/fbIiFrcKGv__4NB7CBfxoA");
+    height: 116px;
+}
+
+div[data-section-style="19"].first-party-element.countdown {
+    background-image: url("https://quip-cdn.com/3bPhykD2dBei9sSjCWteTQ");
+    height: 96px;
+}
+
+div[data-section-style="19"].first-party-element.process_bar {
+    background-image: url("https://quip-cdn.com/ybQlHnHEIIBLog5rZmYs_w");
+    height: 36px;
+}
+
+div[data-section-style="19"].first-party-element.project_tracker {
+    background-image: url("https://quip-cdn.com/OFQU087b4Mxzz1ZaHwtjXA");
+    height: 164px;
+}
+
+div[data-section-style="19"] img {
+    margin: 0.5em;
+}
+
+div[data-section-style="19"] img.masked-image {
+    margin: 0;
+    transform-origin: top left;
+}
+
+div[data-section-style="19"] .image-mask {
+    position: relative;
+    overflow: hidden;
+}
+/*
+ * Copyright 2019 Quip
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain
+ * a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ */
+
+body {
+    counter-reset: indent0 indent1 indent2 indent3 indent4 indent5 indent6
+        indent7 indent8;
+}
+
+/* Numbered list */
+div[data-section-style="6"] {
+    counter-reset: indent0 indent1 indent2 indent3 indent4 indent5 indent6
+        indent7 indent8;
+}
+div[data-section-style="6"].list-numbering-continue {
+    counter-reset: none;
+}
+div[data-section-style="6"].list-numbering-restart-at {
+    counter-reset: indent0 var(--indent0) indent1 indent2 indent3 indent4
+        indent5 indent6 indent7 indent8;
+}
+div[data-section-style="6"] ul {
+    /* indent0 is not reset since it is shared across the div elements */
+    list-style-type: none !important;
+}
+div[data-section-style="6"] ul ul {
+    counter-reset: indent1;
+}
+div[data-section-style="6"] ul ul ul {
+    counter-reset: indent2;
+}
+div[data-section-style="6"] ul ul ul ul {
+    counter-reset: indent3;
+}
+div[data-section-style="6"] ul ul ul ul ul {
+    counter-reset: indent4;
+}
+div[data-section-style="6"] ul ul ul ul ul ul {
+    counter-reset: indent5;
+}
+div[data-section-style="6"] ul li {
+    counter-increment: indent0;
+}
+div[data-section-style="6"] ul ul li {
+    counter-increment: indent1;
+}
+div[data-section-style="6"] ul ul ul li {
+    counter-increment: indent2;
+}
+div[data-section-style="6"] ul ul ul ul li {
+    counter-increment: indent3;
+}
+div[data-section-style="6"] ul ul ul ul ul li {
+    counter-increment: indent4;
+}
+div[data-section-style="6"] ul ul ul ul ul ul li {
+    counter-increment: indent5;
+}
+div[data-section-style="6"] ul li:before {
+    content: counter(indent0, decimal) ". ";
+}
+div[data-section-style="6"] ul ul li:before {
+    content: counter(indent1, lower-alpha) ". ";
+}
+div[data-section-style="6"] ul ul ul li:before {
+    content: counter(indent2, lower-roman) ". ";
+}
+div[data-section-style="6"] ul ul ul ul li:before {
+    content: counter(indent3, decimal) ". ";
+}
+div[data-section-style="6"] ul ul ul ul ul li:before {
+    content: counter(indent4, lower-alpha) ". ";
+}
+div[data-section-style="6"] ul ul ul ul ul ul li:before {
+    content: counter(indent5, lower-roman) ". ";
+}
+</style></head><body><h1 id='EbC9CAI7US5'>Serverless ImmersionDay</h1>
+
+<h1 id='EbC9CAdrTzK'>순서</h1>
+
+<div data-section-style='6' style="" class=""><ul id='EbC9CAizEKC'><li id='EbC9CAp99Ol' class='' value='1'>설정
+
+<br/></li><li id='EbC9CA2Mv0Z' class=''>의존성 설치
+
+<br/></li><li id='EbC9CA8fioP' class=''>터미널에서 게임 서비스 테스트
+
+<br/></li><li id='EbC9CAFLGhX' class=''>웹페이지에서 게임 서비스 테스트
+
+<br/></li></ul></div><h1 id='EbC9CAiMDPQ'>1. 설정</h1>
+
+<h2 id='EbC9CATsqeC'>Cloud9  환경 생성</h2>
+
+<div style="" data-section-style='5' class=""><ul id='EbC9CAV0qOM'><li id='EbC9CAz7ngX' class='parent' value='1'>AWS 웹 콘솔의 서비스페이지에서 Cloud9 검색후 아래 내용으로 IDE 환경 생성
+
+<br/></li><ul><li id='EbC9CA4jui8' class=''>이름: Serverless
+
+<br/></li><li id='EbC9CA03eBa' class=''>인스턴스 타입: <b>t3.small</b>
+
+<br/></li><li id='EbC9CAYNljB' class=''>나머지는 기본설정
+
+<br/></li></ul><li id='EbC9CAkMggt' class=''>아래 진행되는 모든 내용은 Cloud9 위에서 실행
+
+<br/></li></ul></div><h2 id='EbC9CADsVAc'>툴 설치</h2>
+
+C9 IDE 에서 터미널 실행후 아래 명령 입력<br/>
+
+<pre id='EbC9CApAlw1'>$ npm i -g wscat cdk@1.117.0<br>$ pip install httpie</pre>
+
+<h2 id='EbC9CApgr8f'>워크샵 레포지토리 클론</h2>
+
+<pre id='EbC9CAJNnWh'>$ git clone https://github.com/haandol/serverless-event-driven-workshop</pre>
+
+<h2 id='EbC9CA0uKoX'>CDK 로 인프라스트럭쳐 프로비전</h2>
+
+<h3 id='EbC9CAXoNiv'>워크샵 의존성 설치 및 계정에 CDK 초기화</h3>
+
+<pre id='EbC9CAjeBcQ'>$ cd serverless-event-driven-workshop/infra<br>$ npm i</pre>
+
+<h3 id='EbC9CA3UVog'>CDK 배포</h3>
+
+<pre id='EbC9CASTdrX'>$ cdk bootstrap<br>$ cdk deploy "*" --require-approval never</pre>
+
+<h1 id='EbC9CAnzWkn'>터미널에서 게임 서비스 테스트</h1>
+
+CDK 프로젝트를 배포하고나면 아래와 같은 서버리스 어플리케이션이 배포된다.<br/>
+
+<div data-section-style='11' style='max-width:100%' class=''><img src='https://quip-amazon.com/blob/EbC9AAILvZG/rw4NFaxL0GgYzvCOoOfGPw' id='EbC9CAp779W' alt="architecture.png"></img></div><br/>
+
+잘 알려진 <code>베스킨라빈스 31</code> 이라는 게임에서 31을 13으로 바꾼 형태의 게임 구현이다. 게임 서비스의 이용방법은 아래와 같다.<br/>
+
+<div data-section-style='6' style="" class=""><ul id='EbC9CAkC5CS'><li id='EbC9CA0myW9' class='' value='1'>wscat 으로 웹소켓 API 에 접속후<span style="color:#c9d1d9" textcolor="#c9d1d9"> </span><code>connectionID</code> 확인
+
+<br/></li><li id='EbC9CA09pzx' class=''><code>POST /start</code> API 호출하여 게임세션 시작
+
+<br/></li><li id='EbC9CAPvEeu' class=''><code>POST /game</code> API 호출하여 게임 진행
+
+<br/></li><li id='EbC9CA3KA0m' class=''>웹소켓으로 서버응답 오는지 확인
+
+<br/></li><li id='EbC9CAYbBXk' class=''>사용자가 13입력하기 전까지 3~4 단계 진행
+
+<br/></li></ul></div><h2 id='EbC9CAWgup6'>웹소켓 API 주소가져오기</h2>
+
+터미널에서 아래와같이 웹소켓 주소를 가져온다<br/>
+
+<pre id='EbC9CAf1CaS'>$ export WS_ENDPOINT=$(aws cloudformation describe-stacks --stack-name ServerlessWorkshopInfraStack --query "Stacks[0].Outputs[?ExportName=='WsApiUrl'].OutputValue" --output text)<br>$ echo $WS_ENDPOINT<br><br>wss://xxx.execute-api.ap-northeast-2.amazonaws.com/dev</pre>
+
+<h2 id='EbC9CAuHlXE'>wscat 을 이용하여 웹소켓에 접속하기</h2>
+
+위에서 설치한 wscat 을 이용하여 웹소켓에 접속해보고, connectionId 를 확인한다.<br/>
+
+해당 connectionId 는 웹소켓 접속시마다 바뀌는 세션아이디이다.<br/>
+
+<pre id='EbC9CAJ3sGx'>$ wscat -c $WS_ENDPOINT<br><br>Connected (press CTRL+C to quit)<br>&gt; hi<br>&lt; {"message": "Forbidden", "connectionId":"XDmENcnwIE0CFEQ=", "requestId":"XDmGEE2RoE0FRdQ="}<br>&gt;</pre>
+
+<h2 id='EbC9CAFhvu0'>게임세션 시작하기</h2>
+
+새로운 터미널을 띄운다.<br/>
+
+<br/>
+
+아래의 명령어로 Http API 주소를 가져온다<br/>
+
+<pre id='EbC9CA8I7i1'>$ export HTTP_ENDPOINT=$(aws cloudformation describe-stacks --stack-name ServerlessWorkshopInfraStack --query "Stacks[0].Outputs[?ExportName=='HttpApiUrl'].OutputValue" --output text)<br>$ echo $HTTP_ENDPOINT<br><br>https://xxxx.execute-api.ap-northeast-2.amazonaws.com/dev</pre>
+
+위에서 복사해둔 connectionId 를 이용하여 <code>POST /start</code> 요청을 진행한다<br/>
+
+<pre id='EbC9CAdnwmp'>$ export CONN_ID=CONNECTION_ID_YOU_COPIED   # e.g. XDqRFclbIE0CJPw=<br>$ http post $HTTP_ENDPOINT/start sessionId=$CONN_ID accountId=1<br><br>HTTP/1.1 200 OK<br>Apigw-Requestid: XZRxtgVAoE0EPnQ=<br>Connection: keep-alive<br>Content-Length: 16<br>Content-Type: text/plain; charset=utf-8<br>Date: Fri, 11 Dec 2020 15:55:30 GMT<br><br>Session created: XDqRFclbIE0CJPw=</pre>
+
+<h2 id='EbC9CAvyYIk'>게임진행하기</h2>
+
+<code>POST /game</code> 요청을 통해 실제로 게임을 진행해본다.<br/>
+
+<pre id='EbC9CAL1yci'>$ http post $HTTP_ENDPOINT/game sessionId=$CONN_ID accountId=1 userMove=1,2<br><br>HTTP/1.1 200 OK<br>Apigw-Requestid: XDqYKi2WoE0EPdg=<br>Connection: keep-alive<br>Content-Length: 45<br>Content-Type: text/plain; charset=utf-8<br>Date: Sat, 05 Dec 2020 02:31:30 GMT<br>{<br>    "lastMove": 2,<br>    "sessionId": "XDqRFclbIE0CJPw="<br>}</pre>
+
+해당 요청을 보내고 정상적인 응답을 받았다면 웹소켓 터미널에 다음과 같이 서버의 응답이 표시된다.<br/>
+
+<pre id='EbC9CAZzArS'>&gt; hi<br>&lt; {"message": "Forbidden", "connectionId":"XDqRFclbIE0CJPw=", "requestId":"XDqROEJuoE0FpCQ="}<br>&lt; {"data":"3,4"}</pre>
+
+계속해서 <code>POST /game</code> 요청을 통해 13까지 게임을 진행해보자. 웹소켓 터미널에 다음과 같이 표시된다.<br/>
+
+<pre id='EbC9CAeJJdO'>&gt; hi<br>&lt; {"message": "Forbidden", "connectionId":"XEEuXcgPoE0Acmw=", "requestId":"XEFD0E2foE0Fpgg="}<br>&lt; {"data":"3,4"}<br>&lt; {"data":"7,8"}<br>&lt; {"data":"10,11,12"}<br>&lt; {"data":"You lose.."}</pre>
+
+<h1 id='EbC9CA85cxw'>웹페이지를 통해 게임 테스트</h1>
+
+위에서 사용한 내용을 웹페이지로 구성해서 테스트해본다.<br/>
+
+<h2 id='EbC9CAecYHD'>웹페이지 수정</h2>
+
+<div data-section-style='6' style="" class=""><ul id='EbC9CAmLhla'><li id='EbC9CAbmrgY' class='' value='1'>IDE 에서 public/index.html 페이지를 연다. 
+
+<br/></li><li id='EbC9CArA2cK' class=''>17,18 라인의 script 태그 안에있는 wsUrl 과 httpUrl 을 위에서 확인한 WS_ENDPOINT 와 HTTP_ENDPOINT 로 각각 수정한다.
+
+<br/></li></ul></div><h2 id='EbC9CA6mmux'>웹서버 실행</h2>
+
+<div data-section-style='6' style="" class=""><ul id='EbC9CAIP1Ei'><li id='EbC9CAnpyIa' class='' value='1'>새로운 터미널을 띄운다.
+
+<br/></li><li id='EbC9CApq6g6' class=''>클론받은 레포지토리의 public 폴더로 이동한다.
+
+<br/></li><li id='EbC9CAsdFIk' class=''>파이썬에서 제공하는 간단한 정적파일 호스팅을 이용하여 8080 포트로 웹서버를 띄운다.
+
+<br/></li></ul></div><pre id='EbC9CA2Ywo3'>$ cd serverless-event-driven-workshop/public/<br>$ python -m http.server 8080</pre>
+
+<div data-section-style='6' style="--indent0: 3" class="list-numbering-restart-at"><ul id='EbC9CAT2OtM'><li id='EbC9CASQ5gg' class='' value='1'>IDE 상단에 있는 Preview &gt; Preview Running Application 을 클릭하여 브라우저에서 게임을 진행해본다.
+
+<br/></li></ul></div><div data-section-style='11' style='max-width:100%' class=''><img src='https://quip-amazon.com/blob/EbC9AAILvZG/XcQgxImyYsHAlpK263-AAQ' id='EbC9CA1ixaE' width='800' height='353' alt="Screen Shot 2020-12-12 at 1.30.59 AM.png"></img></div></body></html>
